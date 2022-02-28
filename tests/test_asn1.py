@@ -974,6 +974,21 @@ class TestDecoder(object):
 class TestEncoderDecoder(object):
     """Test suite for ASN1 Encoder and Decoder."""
 
+    @staticmethod
+    def assert_encode_decode(v, t):
+        encoder = asn1.Encoder()
+        encoder.start()
+        encoder.write(v, t)
+        encoded_bytes = encoder.output()
+        decoder = asn1.Decoder()
+        decoder.start(encoded_bytes)
+        tag, value = decoder.read()
+        assert value == v
+
+    def test_boolean(self):
+        for v in (True, False):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.Boolean)
+
     def test_big_numbers(self):
         for v in \
         (
@@ -1007,3 +1022,70 @@ class TestEncoderDecoder(object):
             decoder.start(encoded_bytes)
             tag, value = decoder.read()
             assert value == v
+
+    def test_bitstring(self):
+        for v in \
+        (
+            b'\x12\x34\x56',
+            b'\x01',
+            b''
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.BitString)
+
+    def test_octet_string(self):
+        for v in \
+        (
+            b'foo',
+            b'',
+            b'A' * 257
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.OctetString)
+
+    def test_null(self):
+        TestEncoderDecoder.assert_encode_decode(None, asn1.Numbers.Null)
+
+    def test_object_identifier(self):
+        TestEncoderDecoder.assert_encode_decode(
+            '1.2.840.113554.1.2.1.1',
+            asn1.Numbers.ObjectIdentifier
+        )
+
+    def test_enumerated(self):
+        for v in (1, 2, 42):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.Enumerated)
+
+    def test_utf8_string(self):
+        for v in \
+        (
+            'foo',
+            u'fooé'
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.UTF8String)
+
+    def test_printable_string(self):
+        for v in \
+        (
+            'foo',
+            u'fooé'
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.PrintableString)
+
+    def test_ia5_string(self):
+        TestEncoderDecoder.assert_encode_decode('foo', asn1.Numbers.IA5String)
+
+    def test_utc_time(self):
+        for v in \
+        (
+            '920521000000Z',
+            '920622123421Z',
+            '920722132100Z'
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.UTCTime)
+
+    def test_unicode_string(self):
+        for v in \
+        (
+            b'foo',
+            u'fooé'.encode('utf-8')
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.UnicodeString)

@@ -267,7 +267,9 @@ class Encoder(object):
             return value
         if nr in (Numbers.Integer, Numbers.Enumerated):
             return self._encode_integer(value)
-        if nr in (Numbers.OctetString, Numbers.PrintableString):
+        if nr in (Numbers.OctetString, Numbers.PrintableString,
+                  Numbers.UTF8String, Numbers.IA5String,
+                  Numbers.UnicodeString, Numbers.UTCTime):
             return self._encode_octet_string(value)
         if nr == Numbers.BitString:
             return self._encode_bit_string(value)
@@ -542,7 +544,7 @@ class Decoder(object):
             value = self._decode_null(bytes_data)
         elif nr == Numbers.ObjectIdentifier:
             value = self._decode_object_identifier(bytes_data)
-        elif nr in (Numbers.PrintableString, Numbers.IA5String, Numbers.UTCTime):
+        elif nr in (Numbers.PrintableString, Numbers.IA5String, Numbers.UTF8String, Numbers.UTCTime):
             value = self._decode_printable_string(bytes_data)
         elif nr == Numbers.BitString:
             value = self._decode_bitstring(bytes_data)
