@@ -435,6 +435,24 @@ class TestDecoder(object):
         tag, val = dec.read()
         assert val == u'foo'
 
+    def test_bitstring(self):
+        buf = b'\x03\x04\x00\x12\x34\x56'
+        dec = asn1.Decoder()
+        dec.start(buf)
+        tag = dec.peek()
+        assert tag == (asn1.Numbers.BitString, asn1.Types.Primitive, asn1.Classes.Universal)
+        tag, val = dec.read()
+        assert val == b'\x12\x34\x56'
+
+    def test_bitstring_unused_bits(self):
+        buf = b'\x03\x04\x04\x12\x34\x50'
+        dec = asn1.Decoder()
+        dec.start(buf)
+        tag = dec.peek()
+        assert tag == (asn1.Numbers.BitString, asn1.Types.Primitive, asn1.Classes.Universal)
+        tag, val = dec.read()
+        assert val == b'\x01\x23\x45'
+
     def test_unicode_printable_string(self):
         buf = b'\x13\x05\x66\x6f\x6f\xc3\xa9'
         dec = asn1.Decoder()
@@ -699,6 +717,12 @@ class TestDecoder(object):
 
     def test_error_object_identifier_with_too_large_first_component(self):
         buf = b'\x06\x02\x8c\x40'
+        dec = asn1.Decoder()
+        dec.start(buf)
+        pytest.raises(asn1.Error, dec.read)
+
+    def test_error_bitstring_with_too_many_unused_bits(self):
+        buf = b'\x03\x04\x08\x12\x34\x50'
         dec = asn1.Decoder()
         dec.start(buf)
         pytest.raises(asn1.Error, dec.read)

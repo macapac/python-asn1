@@ -544,6 +544,8 @@ class Decoder(object):
             value = self._decode_object_identifier(bytes_data)
         elif nr in (Numbers.PrintableString, Numbers.IA5String, Numbers.UTCTime):
             value = self._decode_printable_string(bytes_data)
+        elif nr == Numbers.BitString:
+            value = self._decode_bitstring(bytes_data)
         else:
             value = bytes_data
         return value
@@ -647,3 +649,28 @@ class Decoder(object):
     def _decode_printable_string(bytes_data):  # type: (bytes) -> str
         """Decode a printable string."""
         return bytes_data.decode('utf-8')
+
+    @staticmethod
+    def _decode_bitstring(bytes_data):  # type: (bytes) -> str
+        """Decode a bitstring."""
+        if len(bytes_data) == 0:
+            raise Error('ASN1 syntax error')
+
+        num_unused_bits = bytes_data[0]
+        if not (0 <= num_unused_bits <= 7):
+            raise Error('ASN1 syntax error')
+
+        if num_unused_bits == 0:
+            return bytes_data[1:]
+
+        # Shift off unused bits
+        remaining = bytearray(bytes_data[1:])
+        bitmask = (1 << num_unused_bits) - 1
+        removed_bits = 0
+
+        for i in range(len(remaining)):
+            byte = int(remaining[i])
+            remaining[i] = (byte >> num_unused_bits) | (removed_bits << num_unused_bits)
+            removed_bits = byte & bitmask
+
+        return bytes(remaining)
