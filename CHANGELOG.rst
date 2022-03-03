@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.0 (2022-03-03)
+------------------
+
+* Fixes to BitString decoding and encoding of IA5String and UTCTime (thanks to 0xbf00)
+
 2.4.2 (2021-10-29)
 ------------------
 
