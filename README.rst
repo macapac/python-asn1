@@ -46,7 +46,7 @@ Features
 Dependencies
 ==============
 
-Python-ASN1 relies on `Python-Future <http://python-future.org>`_ for Python 2 and 3 compatibility. To install Python-Future:
+Python-ASN1 relies on `Python-Future <https://python-future.org>`_ for Python 2 and 3 compatibility. To install Python-Future:
 
 .. code-block:: sh
 
