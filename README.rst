@@ -76,7 +76,7 @@ How to use Python-asn1
 
 .. note:: You can find more detailed documentation on the `Usage`_ page.
 
-.. _Usage: usage.html
+.. _Usage: usage.rst
 
 Encoding
 --------
