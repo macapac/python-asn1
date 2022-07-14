@@ -48,6 +48,7 @@ tag_id_to_string_map = {
     asn1.Numbers.PrintableString: "PRINTABLESTRING",
     asn1.Numbers.IA5String: "IA5STRING",
     asn1.Numbers.UTCTime: "UTCTIME",
+    asn1.Numbers.GeneralizedTime: "GENERALIZED TIME",
     asn1.Numbers.Enumerated: "ENUMERATED",
     asn1.Numbers.Sequence: "SEQUENCE",
     asn1.Numbers.Set: "SET"
