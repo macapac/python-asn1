@@ -1082,6 +1082,18 @@ class TestEncoderDecoder(object):
         ):
             TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.UTCTime)
 
+    def test_generalized_time(self):
+        for v in \
+        (
+            '19920521000000Z',
+            '19920622123421.123Z',
+            '20920722132100-0500',
+            '20920722132100+0200',
+            '20920722132100.123-0500',
+            '20920722132100.123+0200',
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.GeneralizedTime)
+
     def test_unicode_string(self):
         for v in \
         (

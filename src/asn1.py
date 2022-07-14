@@ -42,6 +42,7 @@ class Numbers(IntEnum):
     PrintableString = 0x13
     IA5String = 0x16
     UTCTime = 0x17
+    GeneralizedTime = 0x18
     UnicodeString = 0x1e
 
 
@@ -269,7 +270,8 @@ class Encoder(object):
             return self._encode_integer(value)
         if nr in (Numbers.OctetString, Numbers.PrintableString,
                   Numbers.UTF8String, Numbers.IA5String,
-                  Numbers.UnicodeString, Numbers.UTCTime):
+                  Numbers.UnicodeString, Numbers.UTCTime,
+                  Numbers.GeneralizedTime):
             return self._encode_octet_string(value)
         if nr == Numbers.BitString:
             return self._encode_bit_string(value)
@@ -544,7 +546,9 @@ class Decoder(object):
             value = self._decode_null(bytes_data)
         elif nr == Numbers.ObjectIdentifier:
             value = self._decode_object_identifier(bytes_data)
-        elif nr in (Numbers.PrintableString, Numbers.IA5String, Numbers.UTF8String, Numbers.UTCTime):
+        elif nr in (Numbers.PrintableString, Numbers.IA5String, 
+                    Numbers.UTF8String, Numbers.UTCTime,
+                    Numbers.GeneralizedTime):
             value = self._decode_printable_string(bytes_data)
         elif nr == Numbers.BitString:
             value = self._decode_bitstring(bytes_data)
