@@ -546,7 +546,7 @@ class Decoder(object):
             value = self._decode_null(bytes_data)
         elif nr == Numbers.ObjectIdentifier:
             value = self._decode_object_identifier(bytes_data)
-        elif nr in (Numbers.PrintableString, Numbers.IA5String, 
+        elif nr in (Numbers.PrintableString, Numbers.IA5String,
                     Numbers.UTF8String, Numbers.UTCTime,
                     Numbers.GeneralizedTime):
             value = self._decode_printable_string(bytes_data)
