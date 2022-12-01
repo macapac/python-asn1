@@ -22,6 +22,7 @@ from builtins import bytes
 from builtins import int
 from builtins import range
 from builtins import str
+from contextlib import contextmanager
 from enum import IntEnum
 from numbers import Number
 
@@ -117,6 +118,46 @@ class Encoder(object):
         del self.m_stack[-1]
         self._emit_length(len(value))
         self._emit(value)
+
+    @contextmanager
+    def construct(self, nr, cls=None):  # type: (int, int) -> None
+        """This method - context manager calls enter and leave methods,
+        for better code mapping.
+
+        Usage:
+        ```
+        with encoder.construct(asn1.Numbers.Sequence):
+            encoder.write(1)
+            with encoder.construct(asn1.Numbers.Sequence):
+                encoder.write('foo')
+                encoder.write('bar')
+            encoder.write(2)
+        ```
+        encoder.output() will result following structure:
+        SEQUENCE:
+            INTEGER: 1
+            SEQUENCE:
+                STRING: foo
+                STRING: bar
+            INTEGER: 2
+
+        Args:
+            nr (int): The desired ASN.1 type. Use ``Numbers`` enumeration.
+
+            cls (int): This optional parameter specifies the class
+                of the constructed type. The default class to use is the
+                universal class. Use ``Classes`` enumeration.
+
+        Returns:
+            None
+
+        Raises:
+            `Error`
+
+        """
+        self.enter(nr, cls)
+        yield
+        self.leave()
 
     def write(self, value, nr=None, typ=None, cls=None):  # type: (object, int, int, int) -> None
         """This method encodes one ASN.1 tag and writes it to the output buffer.
