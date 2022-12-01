@@ -279,6 +279,41 @@ class TestEncoder(object):
         res = enc.output()
         assert res == b'\x3f\x83\xff\x7f\x03\x02\x01\x01'
 
+    def test_contextmanager_construct(self):
+        enc = asn1.Encoder()
+        enc.start()
+
+        with enc.construct(asn1.Numbers.Sequence):
+            enc.write(1)
+            enc.write(b'foo')
+
+        res = enc.output()
+        assert res == b'\x30\x08\x02\x01\x01\x04\x03foo'
+
+    def test_contextmanager_calls_enter(self):
+        class TestEncoder(asn1.Encoder):
+            def enter(self, nr, cls=None):
+                raise RuntimeError()
+
+        enc = TestEncoder()
+        enc.start()
+
+        with pytest.raises(RuntimeError):
+            with enc.construct(asn1.Numbers.Sequence):
+                enc.write(1)
+
+    def test_contextmanager_calls_leave(self):
+        class TestEncoder(asn1.Encoder):
+            def leave(self):
+                raise RuntimeError()
+
+        enc = TestEncoder()
+        enc.start()
+
+        with pytest.raises(RuntimeError):
+            with enc.construct(asn1.Numbers.Sequence):
+                enc.write(1)
+
     def test_long_tag_length(self):
         enc = asn1.Encoder()
         enc.start()
