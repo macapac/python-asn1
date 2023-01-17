@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.7.0 (2023-01-17)
+------------------
+
+* Add context manager support (thanks to Mastermind-U)
+
 2.6.0 (2022-07-15)
 ------------------
 
