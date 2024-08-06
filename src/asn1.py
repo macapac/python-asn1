@@ -388,7 +388,7 @@ class Encoder(object):
         if not self._re_oid.match(oid):
             raise Error('Illegal object identifier')
         cmps = list(map(int, oid.split('.')))
-        if cmps[0] > 39 or cmps[1] > 39:
+        if (cmps[0] <= 1 and cmps[1] > 39) or cmps[0] > 2:
             raise Error('Illegal object identifier')
         cmps = [40 * cmps[0] + cmps[1]] + cmps[2:]
         cmps.reverse()
@@ -686,9 +686,12 @@ class Decoder(object):
             if not byte & 0x80:
                 result.append(value)
                 value = 0
-        if len(result) == 0 or result[0] > 1599:
+        if len(result) == 0:
             raise Error('ASN1 syntax error')
-        result = [result[0] // 40, result[0] % 40] + result[1:]
+        if result[0] // 40 <= 1:
+            result = [result[0] // 40, result[0] % 40] + result[1:]
+        else:
+            result = [2, result[0] - 80] + result[1:]
         result = list(map(str, result))
         return str('.'.join(result))
 

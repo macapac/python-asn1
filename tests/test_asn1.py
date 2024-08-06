@@ -177,9 +177,13 @@ class TestEncoder(object):
     def test_long_object_identifier(self):
         enc = asn1.Encoder()
         enc.start()
-        enc.write('39.2.3', asn1.Numbers.ObjectIdentifier)
+        enc.write('2.60.3', asn1.Numbers.ObjectIdentifier)
         res = enc.output()
         assert res == b'\x06\x03\x8c\x1a\x03'
+        enc.start()
+        enc.write('2.999.3', asn1.Numbers.ObjectIdentifier)
+        res = enc.output()
+        assert res == b'\x06\x03\x88\x37\x03'
         enc.start()
         enc.write('1.39.3', asn1.Numbers.ObjectIdentifier)
         res = enc.output()
@@ -341,8 +345,9 @@ class TestEncoder(object):
         enc = asn1.Encoder()
         enc.start()
         pytest.raises(asn1.Error, enc.write, '1', asn1.Numbers.ObjectIdentifier)
-        pytest.raises(asn1.Error, enc.write, '40.2.3', asn1.Numbers.ObjectIdentifier)
+        pytest.raises(asn1.Error, enc.write, '2.2.3', asn1.Numbers.ObjectIdentifier)
         pytest.raises(asn1.Error, enc.write, '1.40.3', asn1.Numbers.ObjectIdentifier)
+        pytest.raises(asn1.Error, enc.write, '3.1', asn1.Numbers.objectIdentifier)
         pytest.raises(asn1.Error, enc.write, '1.2.3.', asn1.Numbers.ObjectIdentifier)
         pytest.raises(asn1.Error, enc.write, '.1.2.3', asn1.Numbers.ObjectIdentifier)
         pytest.raises(asn1.Error, enc.write, 'foo', asn1.Numbers.ObjectIdentifier)
@@ -521,7 +526,11 @@ class TestDecoder(object):
         buf = b'\x06\x03\x8c\x1a\x03'
         dec.start(buf)
         tag, val = dec.read()
-        assert val == u'39.2.3'
+        assert val == u'2.60.3'
+        buf = b'\x06\x03\x88\x37\x03'
+        dec.start(buf)
+        tag, val = dec.read()
+        assert val == u'2.999.3'
         buf = b'\x06\x02\x4f\x03'
         dec.start(buf)
         tag, val = dec.read()
@@ -745,13 +754,7 @@ class TestDecoder(object):
         pytest.raises(asn1.Error, dec.read)
 
     def test_error_non_normalised_object_identifier(self):
-        buf = b'\x06\x02\x80\x01'
-        dec = asn1.Decoder()
-        dec.start(buf)
-        pytest.raises(asn1.Error, dec.read)
-
-    def test_error_object_identifier_with_too_large_first_component(self):
-        buf = b'\x06\x02\x8c\x40'
+        buf = b'\x06\x02\x01\x80'
         dec = asn1.Decoder()
         dec.start(buf)
         pytest.raises(asn1.Error, dec.read)
@@ -1079,11 +1082,21 @@ class TestEncoderDecoder(object):
     def test_null(self):
         TestEncoderDecoder.assert_encode_decode(None, asn1.Numbers.Null)
 
-    def test_object_identifier(self):
+    def test_real_object_identifier(self):
         TestEncoderDecoder.assert_encode_decode(
             '1.2.840.113554.1.2.1.1',
             asn1.Numbers.ObjectIdentifier
         )
+
+    def test_long_object_identifier(self):
+        for v in \
+        (
+            '2.60.3',
+            '2.999.3',
+            '1.39.3',
+            '1.2.300000'
+        ):
+            TestEncoderDecoder.assert_encode_decode(v, asn1.Numbers.ObjectIdentifier)
 
     def test_enumerated(self):
         for v in (1, 2, 42):
