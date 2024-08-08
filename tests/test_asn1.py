@@ -177,7 +177,7 @@ class TestEncoder(object):
     def test_long_object_identifier(self):
         enc = asn1.Encoder()
         enc.start()
-        enc.write('2.60.3', asn1.Numbers.ObjectIdentifier)
+        enc.write('2.1482.3', asn1.Numbers.ObjectIdentifier)
         res = enc.output()
         assert res == b'\x06\x03\x8c\x1a\x03'
         enc.start()
@@ -525,7 +525,7 @@ class TestDecoder(object):
         buf = b'\x06\x03\x8c\x1a\x03'
         dec.start(buf)
         tag, val = dec.read()
-        assert val == u'2.60.3'
+        assert val == u'2.1482.3'
         buf = b'\x06\x03\x88\x37\x03'
         dec.start(buf)
         tag, val = dec.read()
