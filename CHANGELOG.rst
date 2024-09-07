@@ -1,10 +1,10 @@
 Changelog
 =========
 
-UNRELEASED
-----------
+2.7.1 (2024-08-07
+-----------------
 
-* Fix OID encoding/decoding for the first octet according to ITU-T X.690
+* Fix OID encoding/decoding for the first octet according to ITU-T X.690 (thanks to Ian Neal)
 
 2.7.0 (2023-01-17)
 ------------------
