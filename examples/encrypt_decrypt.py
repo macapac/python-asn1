@@ -1,22 +1,21 @@
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
 import base64
 
-# Load the completed RSA private key from a PEM file
-def load_rsa_private_key(pem_path):
-    with open(pem_path, 'rb') as key_file:
+def load_private_key(filepath):
+    """ Load an RSA private key from a PEM file. """
+    with open(filepath, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
-            password=None,
+            password=None,  # No password
             backend=default_backend()
         )
     return private_key
 
-# Decrypt a ciphertext with the private key
-def decrypt_with_private_key(private_key, ciphertext):
+def decrypt_message(private_key, ciphertext):
+    """ Decrypt a message using the provided RSA private key. """
     decrypted_message = private_key.decrypt(
         ciphertext,
         padding.OAEP(
@@ -28,20 +27,21 @@ def decrypt_with_private_key(private_key, ciphertext):
     return decrypted_message
 
 def main():
-    private_key_path = 'complete_private_key.pem'
-    encrypted_message_path = 'encrypted_message.txt'  # path to the Base64-encoded ciphertext file
+    # Path to the RSA private key in PEM format
+    key_path = 'complete_private_key.pem'
+    # Encoded ciphertext (base64)
+    encoded_ciphertext = 'LvTAlRgHHPM0VA7vz1ZnlfAh4kOJR6okqlujlKyg5GTDxMV8BdtfJQnswn9VZk/uOnxxEgy+rjDd bstRonOBpDE/CFB1ozIZDP0+KA2HkgruBj7cGDn7EWyIJGS8EBAQZ+/v4RYNidV7i867x/aoNdQV NajzRM0fnetb3bnW2Ws='
 
-    # Load the private key
-    private_key = load_rsa_private_key(private_key_path)
+    # Load the RSA private key
+    private_key = load_private_key(key_path)
 
-    # Load and decode the encrypted message
-    with open(encrypted_message_path, 'rb') as f:
-        encrypted_data = base64.b64decode(f.read())
+    # Decode the ciphertext from Base64
+    ciphertext = base64.b64decode(encoded_ciphertext)
 
-    # Decrypt the message
-    decrypted_message = decrypt_with_private_key(private_key, encrypted_data)
+    # Decrypt the ciphertext
+    decrypted_message = decrypt_message(private_key, ciphertext)
 
-    # Output the decrypted message
+    # Print the decrypted message
     print("Decrypted message:", decrypted_message.decode())
 
 if __name__ == "__main__":
