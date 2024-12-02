@@ -4,6 +4,10 @@ python dump.py --pem private_key.pem
 
 python rsa_key_completion.py
 
+python finalize_rsa_key.py
+
+
+
 ========
 Overview
 ========
