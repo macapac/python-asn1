@@ -1,0 +1,38 @@
+from sympy import mod_inverse
+
+def calculate_missing_rsa_components(n, e, d, p):
+    # Calculate q
+    q = n // p
+
+    # Calculate d mod (p-1) and d mod (q-1)
+    d_mod_p = d % (p - 1)
+    d_mod_q = d % (q - 1)
+
+    # Calculate (inverse of q) mod p
+    coefficient = mod_inverse(q, p)
+
+    return q, d_mod_p, d_mod_q, coefficient
+
+def main():
+    # Example modulus, private exponent, and prime1 from your decoded output
+    n = 134538784717825970346190486953148160171254601720619262711142950813029425941347972546250891702142339311455400548108745069257214351236230311951940066604587465563263706440357100921487945961674223959117174275604940857459542702131075054848146847959953873790744020602746044398012165549997498503161883851093858812617
+    e = 65537
+    d = 81558377375444527150827804998117449005047134775142021884599513142970323072826244736408466613278193974469560833968786072852279917607827548766935119186622129313453559746985163964548887588262188652543010892719569155275555290619946521131472891669577044998502306001894563934672665395723543713298661894548942902913
+    p = 13327659223293995288791480708192170438713833790231225767950925399452187314919464980500487747202900482905911145771611393666975641464074778291288080821525977
+
+    q, d_mod_p, d_mod_q, coefficient = calculate_missing_rsa_components(n, e, d, p)
+    print("Calculated q:", q)
+    print("d mod (p-1):", d_mod_p)
+    print("d mod (q-1):", d_mod_q)
+    print("Coefficient (inverse of q mod p):", coefficient)
+
+        # Verify the multiplicative inverse
+    if (coefficient * q) % p == 1:
+        print("Coefficient is correctly calculated.")
+    else:
+        print("Error in coefficient calculation.")
+
+    
+
+if __name__ == "__main__":
+    main()
