@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-# This file is part of Python-ASN1. Python-ASN1 is free software that is
-# made available under the MIT license. Consult the file "LICENSE" that
-# is distributed together with this file for the exact licensing terms.
-#
-# Python-ASN1 is copyright (c) 2007-2016 by the Python-ASN1 authors. See
-# the file "AUTHORS" for a complete overview.
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import open, bytes, str
 import sys

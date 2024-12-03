@@ -7,6 +7,11 @@ python rsa_key_completion.py
 python finalize_rsa_key.py
 
 
+openssl rsa -in complete_private_key.pem -text -noout
+
+openssl base64 -d -in encrypted_data.txt -out encrypted.bin
+
+
 
 ========
 Overview
@@ -85,26 +90,3 @@ If you want to decode ASN.1 from DER or BER encoded bytes, use code such as:
   decoder.start(encoded_bytes)
   tag, value = decoder.read()
 
-
-Documentation
-=============
-
-The complete documentation is available on Read The Docs:
-
-`python-asn1.readthedocs.io <https://python-asn1.readthedocs.io/en/latest/>`_
-
-
-License
-=======
-
-Python-ASN1 is free software that is made available under the MIT license.
-Consult the file LICENSE that is distributed together with this library for
-the exact licensing terms.
-
-Copyright
-=========
-
-The following people have contributed to Python-ASN1. Collectively they own the copyright of this software.
-
-* Geert Jansen (geert@boskant.nl): `original implementation <https://github.com/geertj/python-asn1>`_.
-* Sebastien Andrivet (sebastien@andrivet.com)
