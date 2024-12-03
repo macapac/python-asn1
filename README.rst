@@ -6,11 +6,9 @@ python rsa_key_completion.py
 
 python finalize_rsa_key.py
 
-
-openssl rsa -in complete_private_key.pem -text -noout
-
 openssl base64 -d -in encrypted_data.txt -out encrypted.bin
 
+openssl pkeyutl -decrypt -inkey complete_private_key.pem -in encrypted.bin -out decrypted.txt
 
 
 ========
